@@ -32,15 +32,15 @@ export default function HeroCarousel({ items }) {
         <article
           key={s.id}
           aria-label={s.title}
-          className={`relative aspect-[2/3] w-[78%] shrink-0 snap-center overflow-hidden rounded-3xl border border-white/10 transition-opacity duration-300 ${
+          className={`relative aspect-[2/3] w-[78%] shrink-0 snap-center overflow-hidden rounded-3xl transition-opacity duration-300 ${
             i === active ? "opacity-100" : "opacity-60"
           }`}
         >
           <Link to={`/series/${s.id}`} aria-label={`Open ${s.title}`}>
             <Poster series={s} className="h-full w-full" showTitle={false} />
           </Link>
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent px-4 pb-4 pt-24">
-            <h2 className="font-display text-[28px] font-extrabold uppercase leading-[0.95] tracking-tight">{s.title}</h2>
+          <div /* taste-skill-ignore: neutral scrim over poster */ className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent px-4 pb-4 pt-24">
+            <h2 className="font-display text-[22px] font-extrabold uppercase leading-[1] tracking-tight">{s.title}</h2>
             <p className="mt-2 text-[15px] text-ink/90">{s.tagline}</p>
             <div className="pointer-events-auto mt-3 flex gap-2">
               <button

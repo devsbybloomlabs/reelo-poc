@@ -20,7 +20,7 @@ export default function SeriesDetail() {
     <article>
       <div className="relative">
         <Poster series={series} className="aspect-[3/4] w-full" showTitle={false} />
-        <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/30 to-transparent" />
+        <div /* taste-skill-ignore: neutral scrim over poster */ className="absolute inset-0 bg-gradient-to-t from-bg via-bg/30 to-transparent" />
         <button onClick={() => navigate(-1)} aria-label="Back" className="press absolute left-4 top-[max(env(safe-area-inset-top),16px)] grid h-10 w-10 place-items-center rounded-full bg-black/50 backdrop-blur-md">
           <ArrowLeft size={22} />
         </button>

@@ -5,7 +5,7 @@ export default function PhoneFrame({ children }) {
   return (
     <div className="min-h-full w-full bg-[#050505] flex justify-center">
       <div
-        className="relative h-[100dvh] w-full overflow-hidden bg-bg md:my-0 md:border-x md:border-white/10"
+        className="relative h-[100dvh] w-full overflow-hidden bg-bg md:my-0"
         style={{ maxWidth: "var(--frame-w)" }}
       >
         {children}
