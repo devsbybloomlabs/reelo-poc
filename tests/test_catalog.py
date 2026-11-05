@@ -41,3 +41,18 @@ def test_series_filter_and_detail(client):
 
 def test_unknown_series_404(client):
     assert client.get("/api/series/nope").status_code == 404
+
+
+def test_every_series_has_themes(client):
+    series = client.get("/api/series").json()
+    assert len(series) == 12
+    assert all(len(s["themes"]) >= 2 for s in series)
+    assert {"Betrayal", "Reunion", "Rebirth"} <= {t for s in series for t in s["themes"]}
+
+
+def test_seed_backfills_themes_on_existing_db(client):
+    import asyncio
+    from pymongo import MongoClient
+    MongoClient("mongodb://localhost:27017").dramabox_poc_test.series.update_many({}, {"$unset": {"themes": ""}})
+    with TestClient(server.app) as c:  # restart triggers the upsert
+        assert all("themes" in s for s in c.get("/api/series").json())

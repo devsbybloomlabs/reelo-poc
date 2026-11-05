@@ -51,6 +51,22 @@ SERIES = [
      "A florist is recognised by a stranger as a woman who died ten years ago."),
 ]
 
+# Trope/theme labels shown as chips (separate from the genre `category` and `tags`).
+THEMES = {
+    "midnight-contract": ["Betrayal", "Fake marriage"],
+    "the-last-heir": ["Rebirth", "Hidden identity"],
+    "moon-bound": ["Fated mates", "Rivals to lovers"],
+    "second-chance-cafe": ["Reunion", "Second chance"],
+    "billionaires-nanny": ["Hidden identity", "Found family"],
+    "ashes-of-vengeance": ["Betrayal", "Comeback"],
+    "alpha-and-the-omega": ["Forbidden love", "Rebirth"],
+    "home-for-the-holidays": ["Reunion", "Found family"],
+    "love-in-translation": ["Slow burn", "Enemies to lovers"],
+    "mother-knows-best": ["Betrayal", "Family secrets"],
+    "the-ceos-secret-twin": ["Identity swap", "Betrayal"],
+    "her-name-was-rose": ["Rebirth", "Hidden past"],
+}
+
 
 def build_catalog():
     series_docs, episode_docs = [], []
@@ -63,6 +79,7 @@ def build_catalog():
             "tagline": tagline,
             "category": category,
             "tags": tags,
+            "themes": THEMES[slug],
             "synopsis": synopsis,
             "poster_url": f"/api/media/posters/{slug}.jpg",
             "episode_count": count,
@@ -84,10 +101,13 @@ def build_catalog():
 
 
 async def seed_if_empty(db):
-    if await db.series.count_documents({}) > 0:
-        return False
+    """Upsert series on every start (so new catalog fields reach existing databases);
+    insert episodes only on first run so guest unlock state is never disturbed."""
     series_docs, episode_docs = build_catalog()
-    await db.series.insert_many(series_docs)
+    for doc in series_docs:
+        await db.series.update_one({"id": doc["id"]}, {"$set": doc}, upsert=True)
+    if await db.episodes.count_documents({}) > 0:
+        return False
     await db.episodes.insert_many(episode_docs)
     await db.episodes.create_index([("series_id", 1), ("number", 1)])
     return True
