@@ -17,6 +17,7 @@ frontend/build/
 # downloaded media (copyrighted, local-only)
 backend/media/*
 !backend/media/.gitkeep
+!backend/media/CREDITS.md
 
 # taste-skill working files
 .taste-skill/
