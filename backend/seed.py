@@ -25,7 +25,7 @@ SERIES = [
     ("second-chance-cafe", "Second Chance Cafe", "One coffee. One more try.", "Romance",
      ["Romance", "Second chance"], 30,
      "Ten years after a painful breakup, two exes end up running the same small-town cafe."),
-    ("billionaires-nanny", "The Billionaire's Nanny", "She came for the kids. Stayed for him.", "CEO",
+    ("billionaires-nanny", "Billionaire's Nanny", "She came for the kids. Stayed for him.", "CEO",
      ["CEO", "Family"], 42,
      "A nanny with a secret past moves into a glass mansion and quietly rebuilds a broken family."),
     ("ashes-of-vengeance", "Ashes of Vengeance", "They burned her name. She burns theirs.", "Revenge",
