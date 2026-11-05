@@ -128,6 +128,7 @@ export default function Player() {
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black/80 to-transparent px-4 pb-6 pt-24">
         <h1 className="text-xl font-semibold">{series.title}</h1>
         <p className="text-muted">Episode {current?.number ?? 1} of {series.episode_count}</p>
+        <p className="mt-1 text-sm text-ink/80">{series.themes.join(" · ")}</p>
       </div>
 
       {sheet && <UnlockSheet episode={sheet} onUnlocked={onUnlocked} onClose={() => setSheet(null)} />}

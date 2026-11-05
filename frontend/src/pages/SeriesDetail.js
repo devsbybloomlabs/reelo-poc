@@ -29,7 +29,12 @@ export default function SeriesDetail() {
         </div>
       </div>
       <div className="px-5 pt-3">
-        <p className="text-muted">{series.tags.join(" · ")} · {series.episode_count} episodes</p>
+        <ul className="flex flex-wrap gap-2" aria-label="Themes">
+          {series.themes.map((t) => (
+            <li key={t} className="rounded-full bg-surface px-3 py-1 text-sm font-medium">{t}</li>
+          ))}
+        </ul>
+        <p className="mt-3 text-muted">{series.tags.join(" · ")} · {series.episode_count} episodes</p>
         <p className="mt-3 text-[17px] leading-relaxed">{series.synopsis}</p>
         <div className="mt-4 flex gap-2">
           <button onClick={() => navigate(`/watch/${series.id}`)} className="press flex flex-1 items-center justify-center gap-2 rounded-xl bg-white py-3 text-[17px] font-semibold text-black">
