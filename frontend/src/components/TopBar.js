@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Search, User } from "lucide-react";
 import { useGuest } from "@/lib/guest";
 
+const TOP_ZONE = 80; // within this many px of the top the bar never hides
 const THRESHOLD = 8; // px of travel before the bar reacts, so small jitters don't flip it
 
 // Sticky bar that slides away when the page scrolls down and returns on any scroll up.
@@ -20,7 +21,7 @@ export default function TopBar() {
     const update = () => {
       const y = scroller.scrollTop;
       const delta = y - last;
-      if (y <= 0) setHidden(false);
+      if (y < TOP_ZONE) { setHidden(false); last = y; }
       else if (delta > THRESHOLD) { setHidden(true); last = y; }
       else if (delta < -THRESHOLD) { setHidden(false); last = y; }
       ticking = false;
