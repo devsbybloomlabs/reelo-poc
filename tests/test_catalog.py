@@ -56,3 +56,27 @@ def test_seed_backfills_themes_on_existing_db(client):
     MongoClient("mongodb://localhost:27017").dramabox_poc_test.series.update_many({}, {"$unset": {"themes": ""}})
     with TestClient(server.app) as c:  # restart triggers the upsert
         assert all("themes" in s for s in c.get("/api/series").json())
+
+
+def test_search_by_title_and_theme(client):
+    assert [s["title"] for s in client.get("/api/search", params={"q": "midnight"}).json()] == ["Midnight Contract"]
+    by_theme = client.get("/api/search", params={"q": "betrayal"}).json()
+    assert by_theme and all("Betrayal" in s["themes"] for s in by_theme)
+
+
+def test_search_escapes_regex_and_empty(client):
+    assert client.get("/api/search", params={"q": "(("}).status_code == 200
+    assert client.get("/api/search", params={"q": "  "}).json() == []
+
+
+def test_discover(client):
+    body = client.get("/api/search/discover").json()
+    assert len(body["hot"]) == 8 and len(body["trending"]) == 10
+    views = [s["views"] for s in body["trending"]]
+    assert views == sorted(views, reverse=True)
+
+
+def test_feed_has_first_episode(client):
+    feed = client.get("/api/feed").json()
+    assert len(feed) == 12
+    assert all(s["first_episode"]["video_url"].endswith(".mp4") for s in feed)

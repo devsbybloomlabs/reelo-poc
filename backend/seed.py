@@ -86,6 +86,7 @@ def build_catalog():
             "featured": idx < 5,
             "trending_rank": idx + 1,
             "released_order": len(SERIES) - idx,
+            "views": int(round(180_000 * 0.88 ** idx, -2)),
         })
         for n in range(1, count + 1):
             episode_docs.append({

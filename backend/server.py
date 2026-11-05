@@ -1,4 +1,5 @@
 import os
+import re
 import uuid
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
@@ -88,6 +89,36 @@ async def series_detail(series_id: str, x_guest_id: Optional[str] = Header(None)
     for ep in episodes:
         ep["locked"] = ep["cost"] > 0 and ep["id"] not in unlocked
     return {**series, "episodes": episodes}
+
+
+# ---- search, discover, feed -------------------------------------------------
+
+@api.get("/search")
+async def search(q: str = ""):
+    q = q.strip()[:80]
+    if not q:
+        return []
+    rx = {"$regex": re.escape(q), "$options": "i"}
+    query = {"$or": [{"title": rx}, {"themes": rx}, {"tags": rx}]}
+    return await db.series.find(query, NO_ID).sort("trending_rank", 1).to_list(30)
+
+
+@api.get("/search/discover")
+async def discover():
+    by_rank = await db.series.find({}, NO_ID).sort("trending_rank", 1).to_list(100)
+    by_views = sorted(by_rank, key=lambda s: -s["views"])
+    return {"hot": [s["title"] for s in by_rank[:8]], "trending": by_views[:10]}
+
+
+@api.get("/feed")
+async def feed():
+    series = await db.series.find({}, NO_ID).sort("trending_rank", 1).to_list(100)
+    firsts = await db.episodes.find({"number": 1}, NO_ID).to_list(500)
+    by_series = {e["series_id"]: e for e in firsts}
+    return [
+        {**s, "first_episode": {"id": by_series[s["id"]]["id"], "video_url": by_series[s["id"]]["video_url"]}}
+        for s in series if s["id"] in by_series
+    ]
 
 
 # ---- guests, coins, unlocks -------------------------------------------------
