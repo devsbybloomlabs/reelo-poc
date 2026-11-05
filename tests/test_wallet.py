@@ -86,3 +86,14 @@ def test_progress_shows_in_continue_watching(client, guest, paid_episode):
     cw = client.get("/api/library", headers=guest).json()["continue_watching"]
     assert cw[0]["id"] == paid_episode["series_id"]
     assert cw[0]["progress"]["number"] == 6 and cw[0]["progress"]["position"] == 31.5
+
+
+def test_follow_is_separate_from_my_list(client, guest):
+    sid = client.get("/api/series").json()[0]["id"]
+    assert client.post(f"/api/follow/{sid}", headers=guest).json() == {"following": True}
+    client.post(f"/api/follow/{sid}", headers=guest)
+    me = client.get("/api/me", headers=guest).json()
+    assert me["following"] == [sid] and me["list"] == []
+    client.delete(f"/api/follow/{sid}", headers=guest)
+    assert client.get("/api/me", headers=guest).json()["following"] == []
+    assert client.post("/api/follow/nope", headers=guest).status_code == 404

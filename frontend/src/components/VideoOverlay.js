@@ -1,14 +1,15 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Bookmark, ChevronRight, Share2 } from "lucide-react";
+import { Bookmark, Check, ChevronRight, Share2, UserPlus } from "lucide-react";
 import { useGuest } from "@/lib/guest";
 import Poster from "@/components/Poster";
 
 // Reference-style overlay: poster thumb + title + theme chips + synopsis + watch pill (left),
-// Follow / Share (right). Sits above a bottom offset so it clears the tab bar when present.
+// Follow / Save (My List) / Share (right). Sits above a bottom offset so it clears the tab bar when present.
 export default function VideoOverlay({ series, watchLabel, onWatch, subtitle, bottom = "bottom-0" }) {
-  const { toggleList, inList } = useGuest();
+  const { toggleList, inList, toggleFollow, isFollowing } = useGuest();
   const saved = inList(series.id);
+  const following = isFollowing(series.id);
 
   const share = async () => {
     const url = window.location.origin + `/series/${series.id}`;
@@ -46,11 +47,17 @@ export default function VideoOverlay({ series, watchLabel, onWatch, subtitle, bo
           </button>
         </div>
         <div className="flex shrink-0 flex-col items-center gap-3 pb-1">
+          <button onClick={() => toggleFollow(series.id)} aria-pressed={following} className="press flex flex-col items-center gap-1 text-xs font-medium">
+            <span className={`grid h-12 w-12 place-items-center rounded-full backdrop-blur-md ${following ? "bg-white text-black" : "bg-white/15"}`}>
+              {following ? <Check size={22} /> : <UserPlus size={22} />}
+            </span>
+            {following ? "Following" : "Follow"}
+          </button>
           <button onClick={() => toggleList(series.id)} aria-pressed={saved} className="press flex flex-col items-center gap-1 text-xs font-medium">
             <span className="grid h-12 w-12 place-items-center rounded-full bg-white/15 backdrop-blur-md">
               <Bookmark size={22} fill={saved ? "currentColor" : "none"} />
             </span>
-            {saved ? "Following" : "Follow"}
+            {saved ? "Saved" : "Save"}
           </button>
           <button onClick={share} className="press flex flex-col items-center gap-1 text-xs font-medium">
             <span className="grid h-12 w-12 place-items-center rounded-full bg-white/15 backdrop-blur-md">

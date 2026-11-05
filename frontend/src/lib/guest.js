@@ -35,10 +35,27 @@ export function GuestProvider({ children }) {
     }
   }, [refresh]);
 
+  const toggleFollow = useCallback(async (seriesId) => {
+    let was = false;
+    setGuest((g) => {
+      if (!g) return g;
+      const cur = g.following ?? [];
+      was = cur.includes(seriesId);
+      return { ...g, following: was ? cur.filter((id) => id !== seriesId) : [...cur, seriesId] };
+    });
+    try {
+      await (was ? api.delete(`/follow/${seriesId}`) : api.post(`/follow/${seriesId}`));
+    } catch {
+      refresh();
+    }
+  }, [refresh]);
+
+  const isFollowing = useCallback((seriesId) => !!guest && (guest.following ?? []).includes(seriesId), [guest]);
+
   const inList = useCallback((seriesId) => !!guest && guest.list.includes(seriesId), [guest]);
 
   return (
-    <GuestContext.Provider value={{ guest, refresh, setCoins, toggleList, inList }}>
+    <GuestContext.Provider value={{ guest, refresh, setCoins, toggleList, inList, toggleFollow, isFollowing }}>
       {children}
     </GuestContext.Provider>
   );

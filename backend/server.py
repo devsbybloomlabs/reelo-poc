@@ -139,6 +139,7 @@ def _public_guest(g):
         "vip": False,
         "checked_in_today": g.get("last_checkin") == _today(),
         "list": g["list"],
+        "following": g.get("following", []),
     }
 
 
@@ -158,7 +159,7 @@ async def create_guest(x_guest_id: Optional[str] = Header(None)):
         if existing:
             return _public_guest(existing)
     guest = {"id": str(uuid.uuid4()), "coins": STARTING_COINS, "last_checkin": None,
-             "list": [], "unlocked": [], "progress": {}}
+             "list": [], "following": [], "unlocked": [], "progress": {}}
     await db.guests.insert_one(dict(guest))
     return _public_guest(guest)
 
@@ -227,6 +228,20 @@ async def add_to_list(series_id: str, guest=Depends(current_guest)):
 async def remove_from_list(series_id: str, guest=Depends(current_guest)):
     await db.guests.update_one({"id": guest["id"]}, {"$pull": {"list": series_id}})
     return {"saved": False}
+
+
+@api.post("/follow/{series_id}")
+async def follow(series_id: str, guest=Depends(current_guest)):
+    if not await db.series.find_one({"id": series_id}):
+        raise HTTPException(404, "Series not found")
+    await db.guests.update_one({"id": guest["id"]}, {"$addToSet": {"following": series_id}})
+    return {"following": True}
+
+
+@api.delete("/follow/{series_id}")
+async def unfollow(series_id: str, guest=Depends(current_guest)):
+    await db.guests.update_one({"id": guest["id"]}, {"$pull": {"following": series_id}})
+    return {"following": False}
 
 
 class Progress(BaseModel):
