@@ -1,22 +1,26 @@
 import React from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import PhoneFrame from "@/components/PhoneFrame";
 import BottomTabBar from "@/components/BottomTabBar";
 import Home from "@/pages/Home";
 import Library from "@/pages/Library";
 import Profile from "@/pages/Profile";
+import SeriesDetail from "@/pages/SeriesDetail";
 
 export default function App() {
+  const { pathname } = useLocation();
+  const immersive = pathname.startsWith("/watch");
   return (
     <PhoneFrame>
-      <main className="h-full overflow-y-auto no-scrollbar pb-24">
+      <main className={`h-full ${immersive ? "" : "overflow-y-auto no-scrollbar pb-24"}`}>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/series/:seriesId" element={<SeriesDetail />} />
           <Route path="/library" element={<Library />} />
           <Route path="/profile" element={<Profile />} />
         </Routes>
       </main>
-      <BottomTabBar />
+      {!immersive && <BottomTabBar />}
     </PhoneFrame>
   );
 }
