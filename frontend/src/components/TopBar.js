@@ -1,12 +1,44 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Search, User } from "lucide-react";
 import { useGuest } from "@/lib/guest";
 
+const THRESHOLD = 8; // px of travel before the bar reacts, so small jitters don't flip it
+
+// Sticky bar that slides away when the page scrolls down and returns on any scroll up.
 export default function TopBar() {
   const { guest } = useGuest();
+  const ref = useRef(null);
+  const [hidden, setHidden] = useState(false);
+
+  useEffect(() => {
+    const scroller = ref.current?.closest("main");
+    if (!scroller) return;
+    let last = scroller.scrollTop;
+    let ticking = false;
+
+    const update = () => {
+      const y = scroller.scrollTop;
+      const delta = y - last;
+      if (y <= 0) setHidden(false);
+      else if (delta > THRESHOLD) { setHidden(true); last = y; }
+      else if (delta < -THRESHOLD) { setHidden(false); last = y; }
+      ticking = false;
+    };
+    const onScroll = () => {
+      if (!ticking) { ticking = true; requestAnimationFrame(update); }
+    };
+    scroller.addEventListener("scroll", onScroll, { passive: true });
+    return () => scroller.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <header className="flex items-center justify-between px-5 pt-[max(env(safe-area-inset-top),20px)] pb-3">
+    <header
+      ref={ref}
+      className={`sticky top-0 z-20 flex items-center justify-between bg-bg px-5 pt-[max(env(safe-area-inset-top),20px)] pb-3 transition-transform duration-200 ease-out ${
+        hidden ? "-translate-y-full" : "translate-y-0"
+      }`}
+    >
       <Link to="/" className="font-display text-2xl font-extrabold tracking-tight text-accent" aria-label="Reelo home">
         reelo
       </Link>
