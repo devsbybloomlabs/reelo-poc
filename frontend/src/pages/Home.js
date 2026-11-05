@@ -30,15 +30,16 @@ export default function Home() {
   }, [category]);
 
   const forYou = category === "For You";
-  const hero = forYou ? home?.hero ?? [] : filtered;
   const progress = Object.fromEntries(watching.map((s) => [s.id, s.progress]));
+  const hero = forYou
+    ? [...watching, ...(home?.hero ?? []).filter((s) => !progress[s.id])]
+    : filtered;
 
   return (
     <>
       <TopBar />
       <CategoryTabs categories={categories} active={category} onChange={setCategory} />
-      {hero.length > 0 && <HeroCarousel items={hero} />}
-      {forYou && <Rail title="Continue watching" items={watching} progress={progress} />}
+      {hero.length > 0 && <HeroCarousel items={hero} progress={progress} />}
       {forYou
         ? home?.rails.map((r) => <Rail key={r.key} title={r.title} items={r.items} />)
         : <Rail title={`More ${category}`} items={filtered} />}
