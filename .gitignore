@@ -14,10 +14,8 @@ __pycache__/
 node_modules/
 frontend/build/
 
-# downloaded media (copyrighted, local-only)
-backend/media/*
-!backend/media/.gitkeep
-!backend/media/CREDITS.md
+# vercel
+.vercel/
 
 # taste-skill working files
 .taste-skill/

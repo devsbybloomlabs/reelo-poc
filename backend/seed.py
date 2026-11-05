@@ -1,7 +1,7 @@
 """Idempotent catalog seed: invented series, each with a run of episodes.
 
-Video files are placeholders served from /api/media/sample/clip{1..3}.mp4 and
-posters from /api/media/posters/<slug>.jpg. Swap them for licensed content.
+Video files are placeholders served from /media/sample/clip{1..3}.mp4 and
+posters from /media/posters/<slug>.jpg (static files shipped with the frontend). Swap them for licensed content.
 """
 import uuid
 
@@ -81,7 +81,7 @@ def build_catalog():
             "tags": tags,
             "themes": THEMES[slug],
             "synopsis": synopsis,
-            "poster_url": f"/api/media/posters/{slug}.jpg",
+            "poster_url": f"/media/posters/{slug}.jpg",
             "episode_count": count,
             "featured": idx < 5,
             "trending_rank": idx + 1,
@@ -94,7 +94,7 @@ def build_catalog():
                 "series_id": sid,
                 "number": n,
                 "title": f"Episode {n}",
-                "video_url": f"/api/media/sample/clip{(n - 1) % SAMPLE_CLIPS + 1}.mp4",
+                "video_url": f"/media/sample/clip{(n - 1) % SAMPLE_CLIPS + 1}.mp4",
                 "duration": 90,
                 "cost": 0 if n <= FREE_EPISODES else EPISODE_COST,
             })
@@ -108,6 +108,9 @@ async def seed_if_empty(db):
     for doc in series_docs:
         await db.series.update_one({"id": doc["id"]}, {"$set": doc}, upsert=True)
     if await db.episodes.count_documents({}) > 0:
+        for n in range(1, SAMPLE_CLIPS + 1):  # media moved from /api/media to static /media
+            await db.episodes.update_many({"video_url": f"/api/media/sample/clip{n}.mp4"},
+                                          {"$set": {"video_url": f"/media/sample/clip{n}.mp4"}})
         return False
     await db.episodes.insert_many(episode_docs)
     await db.episodes.create_index([("series_id", 1), ("number", 1)])

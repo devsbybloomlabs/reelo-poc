@@ -58,6 +58,7 @@ export default function Profile() {
       </div>
       <p aria-live="polite" className="mt-4 min-h-6 text-sm text-muted">{note}</p>
       <p className="mt-6 break-all text-xs text-muted">Guest ID: {guest.id}</p>
+      <a href="/media/CREDITS.md" target="_blank" rel="noreferrer" className="mt-2 inline-block text-xs text-muted underline">Media credits</a>
     </div>
   );
 }

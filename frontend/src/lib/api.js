@@ -19,5 +19,5 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Media paths come back as /api/media/...; make them absolute against the backend.
-export const mediaUrl = (path) => (path && path.startsWith("/") ? `${BASE}${path}` : path);
+// Media paths come back as /media/...; they are static files served by the frontend host/CDN.
+export const mediaUrl = (path) => path;

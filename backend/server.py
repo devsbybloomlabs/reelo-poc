@@ -8,7 +8,6 @@ from typing import Optional
 
 from dotenv import load_dotenv
 from fastapi import APIRouter, Depends, FastAPI, Header, HTTPException
-from fastapi.staticfiles import StaticFiles
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel
 from pymongo import ReturnDocument
@@ -26,6 +25,8 @@ class _Db:
     client = None
 
     def __getattr__(self, name):
+        if self.client is None:  # serverless: no lifespan guarantee, connect on first use
+            self.client = AsyncIOMotorClient(os.environ.get("MONGO_URL", "mongodb://localhost:27017"))
         return getattr(self.client[os.environ.get("DB_NAME", "dramabox_poc")], name)
 
 
@@ -34,10 +35,12 @@ db = _Db()
 
 @asynccontextmanager
 async def lifespan(_app):
-    db.client = AsyncIOMotorClient(os.environ.get("MONGO_URL", "mongodb://localhost:27017"))
+    client = db.client = AsyncIOMotorClient(os.environ.get("MONGO_URL", "mongodb://localhost:27017"))
     await seed_if_empty(db)
     yield
-    db.client.close()
+    client.close()
+    if db.client is client:
+        db.client = None
 
 
 app = FastAPI(title="DramaBox PoC", lifespan=lifespan)
@@ -272,10 +275,6 @@ async def library(guest=Depends(current_guest)):
 
 
 app.include_router(api)
-
-media_dir = ROOT / "media"
-media_dir.mkdir(exist_ok=True)
-app.mount("/api/media", StaticFiles(directory=media_dir), name="media")
 
 app.add_middleware(
     CORSMiddleware,
