@@ -6,6 +6,7 @@ import Home from "@/pages/Home";
 import Library from "@/pages/Library";
 import Profile from "@/pages/Profile";
 import SeriesDetail from "@/pages/SeriesDetail";
+import Player from "@/pages/Player";
 
 export default function App() {
   const { pathname } = useLocation();
@@ -16,6 +17,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/series/:seriesId" element={<SeriesDetail />} />
+          <Route path="/watch/:seriesId" element={<Player />} />
           <Route path="/library" element={<Library />} />
           <Route path="/profile" element={<Profile />} />
         </Routes>
