@@ -19,6 +19,7 @@ export default function Rail({ title, items, progress = {} }) {
           <Link key={s.id} to={`/series/${s.id}`} className="press w-[34%] shrink-0">
             <Poster series={s} className="aspect-[2/3] w-full rounded-2xl" />
             <p className="mt-2 line-clamp-2 text-[15px] font-medium leading-snug">{s.title}</p>
+            <p className="mt-0.5 line-clamp-2 text-sm leading-snug text-muted">{s.themes?.join(" · ")}</p>
             {progress[s.id] && <p className="text-sm text-muted">Episode {progress[s.id].number}</p>}
           </Link>
         ))}

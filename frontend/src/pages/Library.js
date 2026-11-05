@@ -29,6 +29,7 @@ export default function Library() {
                 <Poster series={s} className="aspect-[2/3] w-16 shrink-0 rounded-xl" showTitle={false} />
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-medium">{s.title}</p>
+                  <p className="text-sm text-muted">{s.themes?.join(" · ")}</p>
                   <p className="text-sm text-muted">Episode {s.progress.number}</p>
                   <div className="mt-2 h-1 rounded bg-white/15">
                     <div className="h-full rounded bg-white" style={{ width: `${Math.min(100, (s.progress.position / s.progress.duration) * 100)}%` }} />
@@ -48,6 +49,7 @@ export default function Library() {
               <Link key={s.id} to={`/series/${s.id}`} className="press">
                 <Poster series={s} className="aspect-[2/3] w-full rounded-2xl" />
                 <p className="mt-2 line-clamp-2 text-sm font-medium leading-snug">{s.title}</p>
+                <p className="line-clamp-1 text-xs text-muted">{s.themes?.join(" · ")}</p>
               </Link>
             ))}
           </div>

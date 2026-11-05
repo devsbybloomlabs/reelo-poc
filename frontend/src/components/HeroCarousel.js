@@ -41,7 +41,8 @@ export default function HeroCarousel({ items }) {
           </Link>
           <div /* taste-skill-ignore: neutral scrim over poster */ className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent px-4 pb-4 pt-24">
             <h2 className="font-display text-[22px] font-extrabold uppercase leading-[1] tracking-tight">{s.title}</h2>
-            <p className="mt-2 text-[15px] text-ink/90">{s.tagline}</p>
+            <p className="mt-2 text-[14px] font-medium text-ink/80">{s.themes?.join(" · ")}</p>
+            <p className="mt-1 text-[15px] text-ink/90">{s.tagline}</p>
             <div className="pointer-events-auto mt-3 flex gap-2">
               <button
                 onClick={() => navigate(`/watch/${s.id}`)}
