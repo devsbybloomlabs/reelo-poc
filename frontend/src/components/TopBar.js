@@ -49,7 +49,7 @@ export default function TopBar() {
             {guest.coins} coins
           </Link>
         )}
-        <button className="press p-2" aria-label="Search"><Search size={24} strokeWidth={1.75} /></button>
+        <Link to="/search" className="press p-2" aria-label="Search"><Search size={24} strokeWidth={1.75} /></Link>
         <Link to="/profile" className="press grid h-10 w-10 place-items-center rounded-full bg-surface" aria-label="Profile">
           <User size={20} strokeWidth={1.75} />
         </Link>
