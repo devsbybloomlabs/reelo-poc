@@ -1,0 +1,24 @@
+# env / secrets
+.env
+.env.*
+!.env.example
+*.local.json
+
+# python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+
+# node
+node_modules/
+frontend/build/
+
+# downloaded media (copyrighted, local-only)
+backend/media/*
+!backend/media/.gitkeep
+
+# taste-skill working files
+.taste-skill/
+
+.DS_Store
